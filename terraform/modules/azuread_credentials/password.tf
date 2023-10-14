@@ -28,17 +28,17 @@ resource "azuread_application_password" "key1" {
   }
 }
 
-resource "time_sleep" "wait_new_password_propagation" {
-  depends_on = [azuread_application_password.key0, azuread_application_password.key1]
+# resource "time_sleep" "wait_new_password_propagation" {
+#   depends_on = [azuread_application_password.key0, azuread_application_password.key1]
 
-  # 2 mins timer on creation
-  create_duration = "2m"
+#   # 2 mins timer on creation
+#   create_duration = "2m"
 
-  # 15 mins to allow new password to be propagated in directory partitions when password changes
-  # destroy_duration = "15m"
+#   # 15 mins to allow new password to be propagated in directory partitions when password changes
+#   # destroy_duration = "15m"
 
-  triggers = {
-    key0 = try(time_rotating.key0.rotation_rfc3339, null)
-    key1 = try(time_rotating.key1.rotation_rfc3339, null)
-  }
-}
+#   triggers = {
+#     key0 = try(time_rotating.key0.rotation_rfc3339, null)
+#     key1 = try(time_rotating.key1.rotation_rfc3339, null)
+#   }
+# }

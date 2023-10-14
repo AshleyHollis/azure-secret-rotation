@@ -41,7 +41,7 @@ resource "azurerm_key_vault_secret" "client_secret" {
   for_each = toset(var.key_vault_ids)
 
   # Add a timer to make sure the new password got replicated into azure ad replica set before we store it into keyvault
-  depends_on = [time_sleep.wait_new_password_propagation]
+  # depends_on = [time_sleep.wait_new_password_propagation]
 
   # name            = format("%s-client-secret", each.value.secret_prefix)
   name            = format("%s-client-secret", var.application.name)
