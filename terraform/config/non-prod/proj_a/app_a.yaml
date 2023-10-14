@@ -1,0 +1,10 @@
+secrets:
+  - name: appFunctionAuthSecret
+    description: "Authentication secret for Azure Function app in app_a"
+    resource:
+      type: "AppRegistrationPassword"
+      app_name: "AppRegistrationNameForAppA"
+    keyVaults:
+      - name: "appLandingZone1KeyVault"
+        subscription_name: "LandingZone1Subscription"
+        resource_group: "LandingZone1ResourceGroup"
