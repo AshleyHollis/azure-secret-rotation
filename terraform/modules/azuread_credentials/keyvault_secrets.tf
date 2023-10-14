@@ -47,7 +47,6 @@ resource "azurerm_key_vault_secret" "client_secret" {
   name            = format("%s-client-secret", var.application.name)
   value           = sensitive(local.active_key_value)
   key_vault_id    = each.value
-  expiration_date = local.active_key_value.end_date
 
   tags = {
     key = local.most_recent_key_name
