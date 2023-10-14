@@ -22,5 +22,4 @@ module "azuread_credentials" {
     name = each.key
     object_id = data.azuread_application.main[each.key].object_id
   }
-  # application_object_id = data.azuread_application.main[each.key].object_id
 }

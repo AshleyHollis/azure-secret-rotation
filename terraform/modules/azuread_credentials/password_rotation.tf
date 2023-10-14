@@ -1,84 +1,56 @@
-#
-# key is used when
-#
-# Keys generated when using the password policy
-#  Key0 password_policy.rotation.days is an odd number
-#  Key1 password_policy.rotation.days is an even number
-#
-
 locals {
-  password_policy = try(var.azuread_credential_policy_key, null) == null ? var.policy : var.credential_policy
+  default_rotation_policy = {
+    # Define the number of days the password is valid. It must be more than the rotation frequency
+    expire_in_days = 380
+    rotation = {
+      # Set how often the password must be rotated. When passed the renewal time, running the terraform plan / apply will change to a new password
+      # Only set one of the value
+      # Note - once set cannot switch between mins/days/months. Only the value can be adjusted.
 
-  expiration_date = {
-    key  = try(var.azuread_credential_policy_key, null) == null ? timeadd(time_rotating.key.0.id, format("%sh", local.password_policy.expire_in_days * 24)) : null
-    key0 = try(var.azuread_credential_policy_key, null) != null ? timeadd(time_rotating.key0.0.id, format("%sh", local.password_policy.expire_in_days * 24)) : null
-    key1 = try(var.azuread_credential_policy_key, null) != null ? timeadd(time_rotating.key1.0.id, format("%sh", local.password_policy.expire_in_days * 24)) : null
+      mins = 10 # only recommended for CI and demo
+      # days = 180
+      # months = 1
+    }
+  }
+
+  rotation_policy = var.rotation_policy == null ? local.default_rotation_policy : var.rotation_policy
+
+  expiration_dates = {
+    key0 = time_rotating.key0.id
+    key1 = time_rotating.key1.id
   }
 
   description = {
-    key = try(format(
-      "key-%s-%s",
-      formatdate("YYMMDDhhmmss", time_rotating.key.0.rotation_rfc3339), // Next rotation date
-      formatdate("YYMMDDhhmmss", local.expiration_date.key)             // Credential expiration date
-    ), null)
     key0 = try(format(
       "key0-%s-%s",
-      formatdate("YYMMDDhhmmss", time_rotating.key0.0.rotation_rfc3339),
-      formatdate("YYMMDDhhmmss", local.expiration_date.key0)
+      formatdate("YYMMDDhhmmss", time_rotating.key0.rotation_rfc3339),
+      formatdate("YYMMDDhhmmss", local.expiration_dates.key0)
     ), null)
     key1 = try(format(
       "key1-%s-%s",
-      formatdate("YYMMDDhhmmss", time_rotating.key1.0.rotation_rfc3339),
-      formatdate("YYMMDDhhmmss", local.expiration_date.key1)
+      formatdate("YYMMDDhhmmss", time_rotating.key1.rotation_rfc3339),
+      formatdate("YYMMDDhhmmss", local.expiration_dates.key1)
     ), null)
   }
 
-  key = {
-    # Coming from the default variables.tf id an azuread_credential_policies was not set
-    mins   = try(local.password_policy.rotation_key0.mins, null)
-    days   = try(local.password_policy.rotation_key0.days, null)
-    months = try(local.password_policy.rotation_key0.months, null)
-    years  = try(local.password_policy.rotation_key0.years, null)
-  }
+  most_recent_key_name = sort([local.expiration_dates.key0, local.expiration_dates.key1])[1] == local.expiration_dates.key0 ? "key0" : "key1"
+  rotate_key0 = local.most_recent_key_name == "key1" ? time_rotating.key0.id : null
+  rotate_key1 = local.most_recent_key_name == "key0" ? time_rotating.key1.id : null
 
-  key0 = {
-    mins   = try(local.password_policy.rotation_key0.mins, null)
-    days   = try(local.password_policy.rotation_key0.days, null)
-    months = try(local.password_policy.rotation_key0.months, null)
-    years  = try(local.password_policy.rotation_key0.years, null)
-  }
-
-  key1 = {
-    mins   = try(local.password_policy.rotation_key1.mins, null)
-    days   = try(local.password_policy.rotation_key1.days, null)
-    months = try(local.password_policy.rotation_key1.months, null)
-    years  = try(local.password_policy.rotation_key1.years, null)    
-  }
-}
-
-resource "time_rotating" "key" {
-  count         = try(var.azuread_credential_policy_key, null) == null ? 1 : 0
-
-  rotation_minutes = try(local.key.mins, null)
-  rotation_days    = try(local.key.days, null)
-  rotation_months  = try(local.key.months, null)
-  rotation_years   = try(local.key.years, null)
+  # Everytime the code run it re-evalute the key to store in the keyvault secret
+  active_key_value = local.most_recent_key_name == "key0" ? azuread_application_password.key0.value : azuread_application_password.key1.value
 }
 
 resource "time_rotating" "key0" {
-  count         = try(var.azuread_credential_policy_key, null) != null ? 1 : 0
-
-  rotation_minutes = try(local.key0.mins, null)
-  rotation_days    = try(local.key0.days, null)
-  rotation_months  = try(local.key0.months, null)
-  rotation_years   = try(local.key0.years, null)  
+  rotation_minutes = try(local.rotation_policy.rotation.mins, null)
+  rotation_days    = try(local.rotation_policy.rotation.days, null)
+  rotation_months  = try(local.rotation_policy.rotation.months, null)
+  rotation_years   = try(local.rotation_policy.rotation.years, null)  
 }
 
 resource "time_rotating" "key1" {
-  count         = try(var.azuread_credential_policy_key, null) != null ? 1 : 0
-
-  rotation_minutes = try(local.key1.mins, null)
-  rotation_days    = try(local.key1.days, null)
-  rotation_months  = try(local.key1.months, null)
-  rotation_years   = try(local.key1.years, null)  
+  rotation_minutes = try(local.rotation_policy.rotation.mins, null)
+  rotation_days    = try(local.rotation_policy.rotation.days, null)
+  rotation_months  = try(local.rotation_policy.rotation.months, null)
+  rotation_years   = try(local.rotation_policy.rotation.years, null)  
 }
