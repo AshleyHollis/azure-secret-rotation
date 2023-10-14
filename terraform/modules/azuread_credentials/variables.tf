@@ -41,8 +41,8 @@ variable "policy" {
       # Note - once set cannot switch between mins/days/months. Only the value can be adjusted.
       #
 
-      # mins = 10 # only recommended for CI and demo
-      days = 180
+      mins = 10 # only recommended for CI and demo
+      # days = 180
       # months = 1
     }
     rotation_key1 = {
@@ -53,8 +53,8 @@ variable "policy" {
       # Note - once set cannot switch between mins/days/months. Only the value can be adjusted.
       #
 
-      # mins = 10 # only recommended for CI and demo
-      days = 361
+      mins = 10 # only recommended for CI and demo
+      # days = 361
       # months = 1
     }
   }
