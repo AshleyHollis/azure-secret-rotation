@@ -5,7 +5,7 @@ resource "azuread_application_password" "key0" {
   application_object_id = var.application.object_id
 
   rotate_when_changed = {
-    rotation = time_rotating.key0.id
+    rotation = local.rotate_key0
   }
 
   lifecycle {
@@ -20,7 +20,7 @@ resource "azuread_application_password" "key1" {
   application_object_id = var.application.object_id
 
   rotate_when_changed = {
-    rotation = time_rotating.key1.id
+    rotation = local.rotate_key1
   }
 
   lifecycle {
