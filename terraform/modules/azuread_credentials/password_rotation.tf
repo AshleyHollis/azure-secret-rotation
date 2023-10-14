@@ -16,8 +16,8 @@ locals {
   rotation_policy = var.rotation_policy == null ? local.default_rotation_policy : var.rotation_policy
 
   expiration_dates = {
-    key0 = time_rotating.key0.id
-    key1 = time_rotating.key1.id
+    key0 = timeadd(time_rotating.key0.id, format("%sh", local.rotation_policy.expire_in_days * 24))
+    key1 = timeadd(time_rotating.key0.id, format("%sh", local.rotation_policy.expire_in_days * 24))
   }
 
   description = {
