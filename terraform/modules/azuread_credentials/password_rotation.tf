@@ -35,32 +35,50 @@ locals {
 
   key = {
     # Coming from the default variables.tf id an azuread_credential_policies was not set
-    days = try(local.password_policy.rotation_key0.days, null)
+    mins   = try(local.password_policy.rotation_key0.mins, null)
+    days   = try(local.password_policy.rotation_key0.days, null)
+    months = try(local.password_policy.rotation_key0.months, null)
+    years  = try(local.password_policy.rotation_key0.years, null)
   }
 
   key0 = {
-    days = try(local.password_policy.rotation_key0.days, null)
+    mins   = try(local.password_policy.rotation_key0.mins, null)
+    days   = try(local.password_policy.rotation_key0.days, null)
+    months = try(local.password_policy.rotation_key0.months, null)
+    years  = try(local.password_policy.rotation_key0.years, null)
   }
 
   key1 = {
-    days = try(local.password_policy.rotation_key1.days, null)
+    mins   = try(local.password_policy.rotation_key1.mins, null)
+    days   = try(local.password_policy.rotation_key1.days, null)
+    months = try(local.password_policy.rotation_key1.months, null)
+    years  = try(local.password_policy.rotation_key1.years, null)    
   }
 }
 
 resource "time_rotating" "key" {
   count         = try(var.azuread_credential_policy_key, null) == null ? 1 : 0
-  rotation_days = local.key.days
-}
 
+  rotation_minutes = try(local.key.mins, null)
+  rotation_days    = try(local.key.days, null)
+  rotation_months  = try(local.key.months, null)
+  rotation_years   = try(local.key.years, null)
+}
 
 resource "time_rotating" "key0" {
   count         = try(var.azuread_credential_policy_key, null) != null ? 1 : 0
-  rotation_days = local.key0.days
+
+  rotation_minutes = try(local.key0.mins, null)
+  rotation_days    = try(local.key0.days, null)
+  rotation_months  = try(local.key0.months, null)
+  rotation_years   = try(local.key0.years, null)  
 }
-
-
 
 resource "time_rotating" "key1" {
   count         = try(var.azuread_credential_policy_key, null) != null ? 1 : 0
-  rotation_days = local.key1.days
+
+  rotation_minutes = try(local.key1.mins, null)
+  rotation_days    = try(local.key1.days, null)
+  rotation_months  = try(local.key1.months, null)
+  rotation_years   = try(local.key1.years, null)  
 }
