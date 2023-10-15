@@ -6,7 +6,7 @@ resource "azuread_application_password" "key0" {
   application_object_id = var.application.object_id
 
   rotate_when_changed = {
-    trigger = var.previous_active_key_name == "key1" ? time_rotating.main.id : ""
+    trigger = var.previous_active_key.name == "key1" ? time_rotating.main.id : var.previous_active_key.end_date
   }
 
   lifecycle {
@@ -22,7 +22,7 @@ resource "azuread_application_password" "key1" {
   application_object_id = var.application.object_id
 
   rotate_when_changed = {
-    trigger = var.previous_active_key_name == "key0" ? time_rotating.main.id : ""
+    trigger = var.previous_active_key.name == "key0" ? time_rotating.main.id : var.previous_active_key.end_date
   }
 
   lifecycle {

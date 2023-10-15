@@ -27,5 +27,5 @@ module "azuread_credentials" {
     name = each.key
     object_id = data.azuread_application.main[each.key].object_id
   }
-  previous_active_key_name = try(data.terraform_remote_state.current_state.outputs.active_key_name[each.key], "")
+  previous_active_key = try(data.terraform_remote_state.current_state.outputs.active_key[each.key], "")
 }
