@@ -1,12 +1,13 @@
 resource "azuread_application_password" "key0" {
   display_name = try(var.display_name, local.description.key0)
-  end_date = local.expiration_dates.key0
+  # end_date = local.expiration_dates.key0
+  end_date_relative     = "8760h" # 1 year
 
   application_object_id = var.application.object_id
 
-  # rotate_when_changed = {
-  #   rotation = local.rotate_key0
-  # }
+  rotate_when_changed = {
+    trigger = var.previous_active_key_name == "key1" ? time_rotating.main.rotation_rfc3339 : ""
+  }
 
   lifecycle {
     #create_before_destroy = true
@@ -15,13 +16,14 @@ resource "azuread_application_password" "key0" {
 
 resource "azuread_application_password" "key1" {
   display_name = try(var.display_name, local.description.key1)
-  end_date     = local.expiration_dates.key1
+  # end_date     = local.expiration_dates.key1
+  end_date_relative     = "8760h" # 1 year
 
   application_object_id = var.application.object_id
 
-  # rotate_when_changed = {
-  #   rotation = local.rotate_key1
-  # }
+  rotate_when_changed = {
+    trigger = var.previous_active_key_name == "key0" ? time_rotating.main.rotation_rfc3339 : ""
+  }
 
   lifecycle {
     #create_before_destroy = true
