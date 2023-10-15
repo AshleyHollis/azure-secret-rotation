@@ -1,13 +1,18 @@
 resource "azuread_application_password" "key0" {
   display_name = try(var.display_name, local.description.key0)
-  end_date = local.expiration_dates.key0
+  # end_date = local.expiration_dates.key0
   # end_date_relative     = "8760h" # 1 year
+  end_date_relative     = local.password_expiry_duration
 
   application_object_id = var.application.object_id
 
+  # rotate_when_changed = {
+  #   # Trigger only when other key is active and use new expiry date for initial deployment.
+  #   trigger = try(var.previous_active_key.name, null) == "key1" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
+  # }
+
   rotate_when_changed = {
-    # Trigger only when other key is active and use new expiry date for initial deployment.
-    trigger = try(var.previous_active_key.name, null) == "key1" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
+    should_rotate = local.rotate_key0 ? "true" : "false"
   }
 
   lifecycle {
@@ -17,14 +22,19 @@ resource "azuread_application_password" "key0" {
 
 resource "azuread_application_password" "key1" {
   display_name = try(var.display_name, local.description.key1)
-  end_date     = local.expiration_dates.key1
+  # end_date     = local.expiration_dates.key1
   # end_date_relative     = "8760h" # 1 year
+  end_date_relative     = local.password_expiry_duration
 
   application_object_id = var.application.object_id
 
+  # rotate_when_changed = {
+  #   # Trigger only when other key is active and use new expiry date for initial deployment.
+  #   trigger = try(var.previous_active_key.name, null) == "key0" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
+  # }
+
   rotate_when_changed = {
-    # Trigger only when other key is active and use new expiry date for initial deployment.
-    trigger = try(var.previous_active_key.name, null) == "key0" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
+    should_rotate = local.rotate_key1 ? "true" : "false"
   }
 
   lifecycle {
