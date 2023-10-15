@@ -15,12 +15,12 @@ locals {
 
   rotation_policy = var.rotation_policy == null ? local.default_rotation_policy : var.rotation_policy
 
-  # expiration_dates = {
-  #   key0 = var.previous_active_key_name == "key0" ? 1 : 0 try(timeadd(time_rotating.key0.0.id, format("%sh", local.rotation_policy.expire_in_days * 24)), null)
-  #   key1 = var.previous_active_key_name == "key0" ? 1 : 0 try(timeadd(time_rotating.key1.0.id, format("%sh", local.rotation_policy.expire_in_days * 24)), null)
-  #   # key0 = azuread_application_password.key0.end_date
-  #   # key1 = azuread_application_password.key1.end_date
-  # }
+  new_expiry_date = timeadd(time_rotating.main.id, format("%sh", local.rotation_policy.expire_in_days * 24))
+
+  expiration_dates = {
+    key0 = var.previous_active_key.name == "key1" ? local.new_expiry_date : var.previous_active_key.end_date
+    key1 = var.previous_active_key.name == "key0" ? local.new_expiry_date : var.previous_active_key.end_date
+  }
 
   description = {
     key0 = ""
@@ -37,8 +37,8 @@ locals {
     # ), null)
   }
 
-  most_recent_key_name = sort([azuread_application_password.key0.end_date, azuread_application_password.key1.end_date])[1] == azuread_application_password.key0.end_date ? "key0" : "key1"
-  # most_recent_key_name = sort([local.expiration_dates.key0, local.expiration_dates.key1])[1] == local.expiration_dates.key0 ? "key0" : "key1"
+  # most_recent_key_name = sort([azuread_application_password.key0.end_date, azuread_application_password.key1.end_date])[1] == azuread_application_password.key0.end_date ? "key0" : "key1"
+   most_recent_key_name = sort([local.expiration_dates.key0, local.expiration_dates.key1])[1] == local.expiration_dates.key0 ? "key0" : "key1"
   # rotate_key0 = local.most_recent_key_name == "key1" ? time_rotating.key0.0.id : null
   # rotate_key1 = local.most_recent_key_name == "key0" ? time_rotating.key1.0.id : null
 

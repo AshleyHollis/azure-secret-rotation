@@ -1,7 +1,7 @@
 resource "azuread_application_password" "key0" {
   display_name = try(var.display_name, local.description.key0)
-  # end_date = local.expiration_dates.key0
-  end_date_relative     = "8760h" # 1 year
+  end_date = local.expiration_dates.key0
+  # end_date_relative     = "8760h" # 1 year
 
   application_object_id = var.application.object_id
 
@@ -16,8 +16,8 @@ resource "azuread_application_password" "key0" {
 
 resource "azuread_application_password" "key1" {
   display_name = try(var.display_name, local.description.key1)
-  # end_date     = local.expiration_dates.key1
-  end_date_relative     = "8760h" # 1 year
+  end_date     = local.expiration_dates.key1
+  # end_date_relative     = "8760h" # 1 year
 
   application_object_id = var.application.object_id
 
