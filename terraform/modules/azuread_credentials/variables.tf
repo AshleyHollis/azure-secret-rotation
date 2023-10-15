@@ -21,3 +21,7 @@ variable "rotation_policy" {
 variable "central_key_vault_id" {
   type = string
 }
+
+variable "previous_active_key_name" {
+  type = string
+}

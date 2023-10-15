@@ -15,6 +15,10 @@ data "azuread_application" "main" {
 
 module "azuread_credentials" {
   source     = "./modules/azuread_credentials"
+  providers = {
+    counters = counters
+  }
+
   for_each   = local.azuread_credentials
 
   central_key_vault_id = var.central_key_vault_id
@@ -23,4 +27,5 @@ module "azuread_credentials" {
     name = each.key
     object_id = data.azuread_application.main[each.key].object_id
   }
+  previous_active_key_name = try(data.terraform_remote_state.current_state.outputs[each.key].active_key_name, "")
 }

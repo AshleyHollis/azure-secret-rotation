@@ -10,3 +10,13 @@
 #   name     = each.value.name
 #   resource_group_name = each.value.resource_group
 # }
+
+data "terraform_remote_state" "current_state" {
+  backend = "remote"
+  config = {
+    organization = "AshleyHollis"
+    workspaces = {
+      name = "azure-secret-rotation-secrets"
+    }
+  }
+}

@@ -9,6 +9,9 @@ terraform {
     azuread = {
       source = "hashicorp/azuread"
     }
+    counters = {
+        source = "RutledgePaulV/counters"
+    }
   }
 }
 
@@ -21,3 +24,5 @@ provider "azurerm" {
 }
 
 provider "azuread" {}
+
+provider counters {}
