@@ -15,7 +15,7 @@ locals {
 
   default_rotation_info = {
     active_key_name = "key0",
-    last_rotation   = "1970-01-01T00:00:00Z"
+    last_rotation   = local.current_time
   }
 
   rotation_info = merge(
