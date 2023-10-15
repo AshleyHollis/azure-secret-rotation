@@ -17,3 +17,7 @@ variable "rotation_policy" {
   description = "Custom rotation policy to apply."
   default     = null
 }
+
+variable "central_key_vault_id" {
+  type = string
+}

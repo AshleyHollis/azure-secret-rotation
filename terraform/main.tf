@@ -17,6 +17,7 @@ module "azuread_credentials" {
   source     = "./modules/azuread_credentials"
   for_each   = local.azuread_credentials
 
+  central_key_vault_id = var.central_key_vault_id
   key_vault_ids = [ var.central_key_vault_id ]
   application = {
     name = each.key
