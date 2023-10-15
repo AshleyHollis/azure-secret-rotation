@@ -14,7 +14,7 @@ locals {
   }
 
   rotation_policy = var.rotation_policy == null ? local.default_rotation_policy : var.rotation_policy
-  rotation_required = var.previous_active_key.last_rotation_trigger_date != time_rotating.main.id
+  rotation_required = try(var.previous_active_key.last_rotation_trigger_date, null) != time_rotating.main.id
 
   new_expiry_date = timeadd(time_rotating.main.id, format("%sh", local.rotation_policy.expire_in_days * 24))
 
