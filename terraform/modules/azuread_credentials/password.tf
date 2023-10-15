@@ -7,7 +7,7 @@ resource "azuread_application_password" "key0" {
 
   rotate_when_changed = {
     # Trigger only when other key is active and use new expiry date for initial deployment.
-    trigger = try(var.previous_active_key.name, null) == "key1" ? local.expiration_dates.key0 : try(var.previous_active_key.end_date, local.expiration_dates.key0)
+    trigger = try(var.previous_active_key.name, null) == "key1" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
   }
 
   lifecycle {
@@ -24,7 +24,7 @@ resource "azuread_application_password" "key1" {
 
   rotate_when_changed = {
     # Trigger only when other key is active and use new expiry date for initial deployment.
-    trigger = try(var.previous_active_key.name, null) == "key0" ? local.expiration_dates.key1 : try(var.previous_active_key.end_date, local.expiration_dates.key1)
+    trigger = try(var.previous_active_key.name, null) == "key0" && local.rotation_required ? time_rotating.main.id : try(var.previous_active_key.last_rotation_trigger_date, time_rotating.main.id)
   }
 
   lifecycle {
