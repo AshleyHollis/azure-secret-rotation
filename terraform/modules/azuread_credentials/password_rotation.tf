@@ -18,8 +18,9 @@ locals {
   new_expiry_date = timeadd(time_rotating.main.id, format("%sh", local.rotation_policy.expire_in_days * 24))
 
   expiration_dates = {
-    key0 = var.previous_active_key.name == "key1" ? local.new_expiry_date : var.previous_active_key.end_date
-    key1 = var.previous_active_key.name == "key0" ? local.new_expiry_date : var.previous_active_key.end_date
+    # Use local.new_expiry_date for initial deployment.
+    key0 = try(var.previous_active_key.name == "key1" ? local.new_expiry_date : var.previous_active_key.end_date, local.new_expiry_date)
+    key1 = try(var.previous_active_key.name == "key0" ? local.new_expiry_date : var.previous_active_key.end_date, local.new_expiry_date)
   }
 
   description = {
