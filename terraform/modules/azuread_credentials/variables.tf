@@ -22,9 +22,4 @@ variable "central_key_vault_id" {
   type = string
 }
 
-variable "previous_active_key" {
-  type = object({
-    name = string
-    end_date = string
-  })
-}
+variable "previous_active_key" {}
