@@ -39,7 +39,7 @@ locals {
 
   # most_recent_key_name = sort([azuread_application_password.key0.end_date, azuread_application_password.key1.end_date])[1] == azuread_application_password.key0.end_date ? "key0" : "key1"
   #  most_recent_key_name = sort([try(local.expiration_dates.key0, 1), try(local.expiration_dates.key1, 1)])[1] == try(local.expiration_dates.key0, 1) ? "key0" : "key1"
-  most_recent_key_name = "key0"
+  most_recent_key_name = sort([local.expiration_dates.key0, local.expiration_dates.key1])[1] == local.expiration_dates.key0 ? "key0" : "key1"
   # rotate_key0 = local.most_recent_key_name == "key1" ? time_rotating.key0.0.id : null
   # rotate_key1 = local.most_recent_key_name == "key0" ? time_rotating.key1.0.id : null
 
